@@ -1,0 +1,25 @@
+{
+    "name": "php101/php101",
+    "description": "a library by basetwo technology",
+    "version": "1.0.0",
+    "type": "library",
+    "require-dev": {
+        "firebase/php-jwt": "6.5.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Php101\\Php101\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "emmanuel muswalo",
+            "email": "emuswalo7@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "phpmailer/phpmailer": "^6.8"
+    }
+}

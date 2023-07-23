@@ -1,0 +1,15 @@
+# Ignore the vendor directory
+/vendor
+
+# Ignore specific files
+test.php
+
+#play.py
+#this.html
+
+# Ignore other files or patterns
+#/path/to/another/file.ext
+*.log
+*.enc
+*.py
+*.html
