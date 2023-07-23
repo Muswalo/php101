@@ -10,7 +10,7 @@
  * @country   Zambia
  */
 
-namespace Php101\Php101;
+ namespace Muswalo\Php101;
 use \Exception;
 // this class validates the input
 class validate{

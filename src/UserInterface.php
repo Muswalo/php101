@@ -10,12 +10,13 @@
  * @country   Zambia
  */
 
-namespace Php101\Php101;
+ namespace Muswalo\Php101;
 
 use Firebase\JWT\JWT;
 use Php101\Php101\Psh;
 use \PDO;
 use \Exception;
+use Muswalo\Php101\ErrorLogger;
 
 class UserInterface extends ErrorLogger{
 

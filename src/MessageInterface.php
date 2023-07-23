@@ -15,8 +15,8 @@
  * i dont own the rights for the library
  */ 
 
-namespace Php101\Php101; // the classes namespace
-use PHPMailer\PHPMailer\PHPMailer;
+ namespace Muswalo\Php101;
+ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use \Exception;
 

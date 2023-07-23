@@ -8,8 +8,8 @@
  * @country   Zambia
  */
 
-namespace Php101\Php101;
-use Firebase\JWT\JWT;
+ namespace Muswalo\Php101;
+ use Firebase\JWT\JWT;
 use \Exception;
 
 class SecureVault {

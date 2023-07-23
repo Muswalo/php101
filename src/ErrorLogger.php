@@ -9,8 +9,8 @@
  * @country   Zambia
  */
 
-namespace Php101\Php101;
-class ErrorLogger{
+ namespace Muswalo\Php101;
+ class ErrorLogger{
     /**
      * this instaciates a new error and logs it to the database
      */

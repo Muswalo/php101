@@ -10,7 +10,7 @@
  * @country   Zambia
  */
 
-namespace Php101\Php101;
+ namespace Muswalo\Php101;
 
 class Async {
     private $callback; private $process;
