@@ -9,7 +9,7 @@
  * @country   Zambia
  */
 
-namespace Muswalo\Php101;
+namespace Php101\Php101;
 use \PDO;
 
 class DBInterface{
@@ -45,7 +45,6 @@ class DBInterface{
      */
 
     public function conn():object{
-        try {
 
             $dbh = new PDO('mysql:host='.$this->DBHOST.';dbname='.$this->DBNAME,$this->DBUSER,$this->DBPASS);
             $dbh->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
@@ -53,11 +52,6 @@ class DBInterface{
             $dbh->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,PDO::FETCH_ASSOC);
 
             return $dbh; //return the connection object
-        } catch (\PDOException $e) {
-
-            return $e; // return an error
-            
-        }
     }
 
 }

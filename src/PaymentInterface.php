@@ -10,8 +10,8 @@
  * @country   Zambia
  */
 
- namespace Muswalo\Php101;
- class PaymentInterface {
+namespace Php101\Php101;
+class PaymentInterface {
 
     public function AirtelMoney () {
         $curl = curl_init();

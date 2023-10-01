@@ -9,7 +9,7 @@
  * @country   Zambia
  */
 
- namespace Muswalo\Php101;
+namespace Php101\Php101;
 
 // use \Exception;
 

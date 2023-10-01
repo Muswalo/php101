@@ -15,8 +15,8 @@
  * i dont own the rights for the library
  */ 
 
- namespace Muswalo\Php101;
- use PHPMailer\PHPMailer\PHPMailer;
+namespace Php101\Php101; // the classes namespace
+use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use \Exception;
 
@@ -77,12 +77,12 @@ class MessageInterface extends PHPMailer{
         
         try {
             //Server settings
-            $this->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+            // $this->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
             $this->isSMTP();                                            //Send using SMTP
-            $this->Host       = 'smtp.example.com';                     //Set the SMTP server to send through
+            $this->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
             $this->SMTPAuth   = true;                                   //Enable SMTP authentication
-            $this->Username   = 'user@example.com';                     //SMTP username
-            $this->Password   = 'secret';                               //SMTP password
+            $this->Username   = 'emuswalo7@gmail.com';                     //SMTP username
+            $this->Password   = 'lnumgdpctccvbjlk';                               //SMTP password
             $this->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
             $this->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 

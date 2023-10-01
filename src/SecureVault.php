@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Base Two Technologies (https://basetwotech.com)
  * @package   Base Two Technologies
@@ -8,11 +9,14 @@
  * @country   Zambia
  */
 
- namespace Muswalo\Php101;
- use Firebase\JWT\JWT;
+namespace Php101\Php101;
+
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use \Exception;
 
-class SecureVault {
+class SecureVault
+{
 
   /**
    * Encrypts the provided string using sodium_crypto_secretbox($value, $nonce, $key)
@@ -21,17 +25,16 @@ class SecureVault {
    * @return string The encrypted text
    * 
    */
-  public function cipher(string $value, string $key): string {
+  public function cipher(string $value, string $key): string
+  {
 
     try {
       $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
       $cipher = sodium_crypto_secretbox($value, $nonce, $key);
-      return base64_encode($nonce.$cipher);
-  
+      return base64_encode($nonce . $cipher);
     } catch (\Throwable $e) {
-      throw new Exception("Encrptyion failed:".$e->getMessage()); 
+      throw new Exception("Encrptyion failed:" . $e->getMessage());
     }
-
   }
 
 
@@ -44,16 +47,16 @@ class SecureVault {
    */
 
 
-  public function deCipher (string $cipher, string $key) : ?string {
+  public function deCipher(string $cipher, string $key): ?string
+  {
     try {
       $decodedValue = base64_decode($cipher);
       $nonce = substr($decodedValue, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
       $cipher = substr($decodedValue, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
 
       return sodium_crypto_secretbox_open($cipher, $nonce, $key);
-
     } catch (\Throwable $e) {
-      throw new Exception("Deciphering fialed: Could not decrypt the ciphered string: ".$e->getMessage());
+      throw new Exception("Deciphering fialed: Could not decrypt the ciphered string: " . $e->getMessage());
     }
   }
 
@@ -65,7 +68,8 @@ class SecureVault {
    * @return bool 
    */
 
-  private function retrieveJWTFromFile(string $data): string|bool {
+  private function retrieveJWTFromFile(string $data): string|bool
+  {
 
     // the delimeter or separator of the data and signature
     $delimeter = '::CONTENT::';
@@ -73,11 +77,10 @@ class SecureVault {
     // checks
     if (strpos($data, $delimeter) == false) {
       return false;
-    }else {
+    } else {
       $array = explode($delimeter, $data);
     }
     return $array[0];
-
   }
 
 
@@ -88,7 +91,8 @@ class SecureVault {
    * @return bool 
    */
 
-   private function retrieveContentFromFile(string $data): string|bool {
+  private function retrieveContentFromFile(string $data): string|bool
+  {
 
     // the delimeter or separator of the data and signature
     $delimeter = '::CONTENT::';
@@ -96,11 +100,10 @@ class SecureVault {
     // checks
     if (strpos($data, $delimeter) == false) {
       return false;
-    }else {
+    } else {
       $array = explode($delimeter, $data);
     }
     return $array[1];
-
   }
 
 
@@ -117,14 +120,14 @@ class SecureVault {
    *
    */
 
-  public function fileDecipher (string $file, string $key): mixed {
+  public function fileDecipher(string $file, string $key): mixed
+  {
 
     try {
-          // check if the file exists
-      if (!file_exists($file)) { 
+      // check if the file exists
+      if (!file_exists($file)) {
 
         throw new Exception("The system could not find the file: $file in the specified directory.");
-        
       }
 
       // verify the files extension and filename format ('value_timestamp_signature.enc')
@@ -133,7 +136,7 @@ class SecureVault {
       $pattern = "/^[^_]+_\d+_[^.]+\.enc$/";
 
       if (!preg_match($pattern, $file) || $fileExt !== 'enc') {
-          throw new Exception("Invalid file name format. value_timestamp_signature.enc expected");
+        throw new Exception("Invalid file name format. value_timestamp_signature.enc expected");
       }
 
       //get the files content
@@ -144,7 +147,7 @@ class SecureVault {
       //decipher the content using the key if it fails return false
       $decipheredContent = $this->deCipher($dataToDecipher, $key);
       if (!$decipheredContent) {
-          return false;
+        return false;
       }
 
       // retrive th jwt from the content
@@ -157,22 +160,20 @@ class SecureVault {
 
       // verify the digital signtuure      
       if (!$this->verifySignature($dataToDecipher, $jwt, $key)) {
-          return false;
+        return false;
       }
 
       // decode the content
       $decodedContent =  json_decode($content, true);
 
       if ($decodedContent === null) {
-          throw new Exception("Invalid JSON format in the deciphered content: problem with the file content");
+        throw new Exception("Invalid JSON format in the deciphered content: problem with the file content");
       }
-      
+
       return $decodedContent;
-
     } catch (\Throwable $e) {
-      throw new Exception("fileDecipher fialed:".$e->getMessage());
+      throw new Exception("fileDecipher fialed:" . $e->getMessage());
     }
-
   }
 
   /**
@@ -184,27 +185,26 @@ class SecureVault {
    * 
    */
 
-   public function verifySignature ($fileContent, $jwt, $secreteKey) :bool {
+  public function verifySignature($fileContent, $jwt, $secreteKey): bool
+  {
 
     try {
-        $decoded =  JWT::decode($jwt, $secreteKey);
+      $decoded =  JWT::decode($jwt, $secreteKey);
 
-        if ($decoded) {
-            $decipheredContent = $this->deCipher($fileContent, $secreteKey);
-            
-            if ($decipheredContent !== false) {
-                $hash = hash('sha256', $decipheredContent); 
-                $digest = hash('sha256', $hash.$secreteKey.$decoded->headers);
-                return $digest === $decoded->signature;
-            }
+      if ($decoded) {
+        $decipheredContent = $this->deCipher($fileContent, $secreteKey);
+
+        if ($decipheredContent !== false) {
+          $hash = hash('sha256', $decipheredContent);
+          $digest = hash('sha256', $hash . $secreteKey . $decoded->headers);
+          return $digest === $decoded->signature;
         }
+      }
 
-        return false;
-
+      return false;
     } catch (\Throwable $e) {
-      throw new Exception("could not verify signature: ".$e->getMessage());
+      throw new Exception("could not verify signature: " . $e->getMessage());
     }
-
   }
 
   /**
@@ -214,15 +214,16 @@ class SecureVault {
    * @return string the signature
    * 
    */
-  public function generateSignature (string $data,string $key, array $extra = []) :string {
+  public function generateSignature(string $data, string $key, array $extra = []): string
+  {
     $payLoad = [
-        "extra" => $extra,
-        "digest" => $data
-    ]; 
+      "extra" => $extra,
+      "digest" => $data
+    ];
     try {
-        return JWT::encode($payLoad, $key, 'HS256');
+      return JWT::encode($payLoad, $key, 'HS256');
     } catch (\Throwable $e) {
-        throw new Exception("Error generating the signature: ".$e->getMessage());
+      throw new Exception("Error generating the signature: " . $e->getMessage());
     }
   }
 
@@ -235,33 +236,102 @@ class SecureVault {
    * @param string the prefix to attach to the file name. By default is config
    */
 
-  public function encryptToFile (array $fileContent, string $key, string $dir = __DIR__,string $prefix = 'config_') {
+  public function encryptToFile(array $fileContent, string $key, string $dir = __DIR__, string $prefix = 'config_')
+  {
 
     // check if the given directory exists.
     if (!is_dir($dir)) {
-        throw new Exception("The given directory: '$dir' is not a directory");
+      throw new Exception("The given directory: '$dir' is not a directory");
     }
 
     try {
       // hash the content and encrypt it.
       $hashedContent = hash('sha256', json_encode($fileContent));
-      $encryptedContent = $this->cipher(json_encode($fileContent),$key);
+      $encryptedContent = $this->cipher(json_encode($fileContent), $key);
 
       // generate the signature.
-      $jwt = $this->generateSignature($hashedContent, $key, ['timeCreated'=>time()]);
+      $jwt = $this->generateSignature($hashedContent, $key, ['timeCreated' => time()]);
 
       // generate the file name.
-      $filename = $prefix.time().'_'.bin2hex(random_bytes(8)).'.enc';
-      $path = $dir.$filename;
+      $filename = $prefix . time() . '_' . bin2hex(random_bytes(8)) . '.enc';
+      $path = $dir . $filename;
 
       // generate the files content structure jwt::CONTENT::content.
-      $fileContent = $jwt.'::CONTENT::'.$encryptedContent;
+      $fileContent = $jwt . '::CONTENT::' . $encryptedContent;
 
       // create a file if it doest exist and put the encrypted content.
       return file_put_contents($path, $fileContent);
-
     } catch (\Throwable $e) {
-      throw new Exception("Could not encrypt data to file: ".$e->getMessage());
+      throw new Exception("Could not encrypt data to file: " . $e->getMessage());
     }
   }
+
+  /**
+   * Validates the provided JWT (JSON Web Token) using the secret key.
+   *
+   * @param string $jwt The JSON Web Token to validate.
+   * @param string $secretKey The secret key used for validating the JWT.
+   * @return bool Returns true if the JWT is valid, false otherwise.
+   * @throws Exception Throws an exception if validation fails or an error occurs.
+   */
+  public function validateJWT(string $jwt, string $secretKey): bool
+  {
+    try {
+      // Decode the JWT and verify it using the secret key
+      $decoded = JWT::decode($jwt, new Key($secretKey, 'HS256'));
+
+      // If the JWT is successfully decoded, it means it is valid
+      return true;
+    } catch (\Throwable $e) {
+      // If an error occurs during decoding or verification, the JWT is invalid
+      // throw new Exception("error during JWT validation: {$e->getMessage()}");
+      return false;
+    }
+  }
+
+  /**
+   * Generate a login JWT for the given ID and other data.
+   *
+   * @param int $userId The ID of the user.
+   * @param string $username The username of the user.
+   * @param string $secretKey The secret key to sign the JWT.
+   * @param int $expirationTime The expiration time of the JWT (in seconds). Default is 3600 seconds (1 hour).
+   * @return string The generated JWT.
+   * @throws Exception If there's an error generating the JWT.
+   */
+  public function generateLoginJWT(string $id, string $secretKey, int $expirationTime = 3600): string
+  {
+    try {
+      $payload = array(
+        "id" => $id,
+        "exp" => time() + $expirationTime
+      );
+
+      return JWT::encode($payload, $secretKey, 'HS256');
+    } catch (\Throwable $e) {
+      throw new Exception("Error generating login JWT: " . $e->getMessage());
+    }
+  }
+
+    /**
+     * Decode the Bearer token to obtain the user's ID.
+     *
+     * @param string $bearerToken The Bearer token to decode
+     * @param string $jwtKey The JWT secret key
+     * @return int|null The user's ID or null if decoding fails
+     */
+
+    public function decodeJWT($bearerToken, $jwtKey)
+    {
+        try {
+            // Decode the JWT token
+            $decoded = JWT::decode($bearerToken, new Key($jwtKey, 'HS256'));
+            // Return the user ID from the decoded token
+            return $decoded->id ?? null;
+        } catch (\Exception $e) {
+            // If decoding fails, return null
+            return null;
+            // return $e->getMessage();
+        }
+    }
 }
