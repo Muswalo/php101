@@ -81,8 +81,8 @@ class MessageInterface extends PHPMailer{
             $this->isSMTP();                                            //Send using SMTP
             $this->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
             $this->SMTPAuth   = true;                                   //Enable SMTP authentication
-            $this->Username   = 'emuswalo7@gmail.com';                     //SMTP username
-            $this->Password   = 'lnumgdpctccvbjlk';                               //SMTP password
+            $this->Username   = '';                     //SMTP username
+            $this->Password   = '';                               //SMTP password
             $this->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
             $this->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
